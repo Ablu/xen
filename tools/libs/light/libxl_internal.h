@@ -169,6 +169,7 @@
 /* Virtio device types */
 #define VIRTIO_DEVICE_TYPE_GENERIC   "virtio,device"
 #define VIRTIO_DEVICE_TYPE_I2C       "virtio,device22"
+#define VIRTIO_DEVICE_TYPE_FS        "virtio,device26"
 #define VIRTIO_DEVICE_TYPE_GPIO      "virtio,device29"
 
 /* logging */

@@ -987,6 +987,19 @@ static int make_virtio_mmio_node_i2c(libxl__gc *gc, void *fdt)
     return fdt_end_node(fdt);
 }
 
+static int make_virtio_mmio_node_fs(libxl__gc *gc, void *fdt)
+{
+    int res;
+
+    res = fdt_begin_node(fdt, "fs");
+    if (res) return res;
+
+    res = fdt_property_compat(gc, fdt, 1, VIRTIO_DEVICE_TYPE_FS);
+    if (res) return res;
+
+    return fdt_end_node(fdt);
+}
+
 /*
  * The DT bindings for GPIO device are present here:
  *
@@ -1030,6 +1043,10 @@ static int make_virtio_mmio_node_device(libxl__gc *gc, void *fdt, uint64_t base,
     if (!strcmp(type, VIRTIO_DEVICE_TYPE_I2C)) {
         res = make_virtio_mmio_node_i2c(gc, fdt);
         if (res) return res;
+    } else if (!strcmp(type, VIRTIO_DEVICE_TYPE_FS)) {
+        LOG(ERROR, "Adding dtb node for virtio-fs");
+        res = make_virtio_mmio_node_fs(gc, fdt);
+        if (res) return res;
     } else if (!strcmp(type, VIRTIO_DEVICE_TYPE_GPIO)) {
         res = make_virtio_mmio_node_gpio(gc, fdt);
         if (res) return res;
@@ -1042,6 +1059,7 @@ static int make_virtio_mmio_node_device(libxl__gc *gc, void *fdt, uint64_t base,
                 return -EINVAL;
         }
     }
+    LOG(ERROR, "ending dtb node");
 
     return fdt_end_node(fdt);
 }
@@ -1367,6 +1385,7 @@ next_resize:
             }
         }
 
+        LOG(ERROR, "num_virtios: %d", d_config->num_virtios);
         for (i = 0; i < d_config->num_virtios; i++) {
             libxl_device_virtio *virtio = &d_config->virtios[i];
 
